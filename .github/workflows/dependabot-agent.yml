@@ -1,0 +1,17 @@
+name: Dependabot Agent
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  dependabot:
+    uses: unbounce/agentic-tools/.github/workflows/dependabot-agent-shared.yml@main
+    with:
+      ecosystem: none
+    secrets:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
