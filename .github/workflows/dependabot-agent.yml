@@ -13,7 +13,7 @@ jobs:
     if: |
       (github.actor == 'dependabot[bot]' || github.actor == 'app/dependabot') &&
       startsWith(github.event.pull_request.head.ref, 'dependabot/')
-    uses: unbounce/agentic-tools/.github/workflows/dependabot-agent-shared.yml@main
+    uses: unbounce/agentic-tools/.github/workflows/dependabot-agent-shared.yml@v1
     with:
       ecosystem: none
     secrets:
