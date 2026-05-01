@@ -1,58 +1,65 @@
----
-AWSTemplateFormatVersion: "2010-09-09"
-Description: "Alerts when AWS root has logged into the console"
-
-Parameters:
-  RecipientEmailAddress:
-    Type: String
-    Description: "Email address that receives the alerts"
-
-Resources:
-  AlertTopic:
-    Type: "AWS::SNS::Topic"
-    Properties:
-      DisplayName: "AWS Root Login Alert"
-      Subscription:
-        - Protocol: email
-          Endpoint: !Ref RecipientEmailAddress
-  CloudwatchEventRule:
-    Type: "AWS::Events::Rule"
-    Properties:
-      Description: >
-        Watches for when the AWS root user signs into the console.
-      EventPattern:
-        detail:
-          userIdentity:
-            type:
-              - "Root"
-          eventName:
-            - "ConsoleLogin"
-          responseElements:
-            ConsoleLogin:
-              - "Success"
-      State: "ENABLED"
-      Targets:
-        - Arn: !Ref AlertTopic
-          Id: !GetAtt AlertTopic.TopicName
-  TopicPolicy:
-    Type: "AWS::SNS::TopicPolicy"
-    Properties:
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Sid: "AllowCWEToPublishAlertsToSNS"
-            Effect: "Allow"
-            Principal:
-              Service: "events.amazonaws.com"
-            Action: "sns:Publish"
-            Resource: !Ref AlertTopic
-      Topics:
-        - !Ref AlertTopic
-
-Outputs:
-  AlertTopicArn:
-    Value: !Ref AlertTopic
-    Description: "ARN of the topic that receives alerts"
-    Export:
-      Name: "root-login-alerts:sns:topic:arn"
-
+# DEPRECATED — PS-4592
+# This service has been migrated to OpenTofu/Terragrunt. The live stack
+# (root-login-alerts-production) has DeletionPolicy: Retain on all resources
+# and is kept indefinitely; this template is no longer used to deploy or
+# update it. New management lives at:
+#   ub-tf-infrastructure/infrastructure/platform-services/unbounce-production/production/us-east-1/aws-root-login-alert/
+# Do NOT re-enable any of the lines below.
+#
+# ---
+# AWSTemplateFormatVersion: "2010-09-09"
+# Description: "Alerts when AWS root has logged into the console"
+#
+# Parameters:
+#   RecipientEmailAddress:
+#     Type: String
+#     Description: "Email address that receives the alerts"
+#
+# Resources:
+#   AlertTopic:
+#     Type: "AWS::SNS::Topic"
+#     Properties:
+#       DisplayName: "AWS Root Login Alert"
+#       Subscription:
+#         - Protocol: email
+#           Endpoint: !Ref RecipientEmailAddress
+#   CloudwatchEventRule:
+#     Type: "AWS::Events::Rule"
+#     Properties:
+#       Description: >
+#         Watches for when the AWS root user signs into the console.
+#       EventPattern:
+#         detail:
+#           userIdentity:
+#             type:
+#               - "Root"
+#           eventName:
+#             - "ConsoleLogin"
+#           responseElements:
+#             ConsoleLogin:
+#               - "Success"
+#       State: "ENABLED"
+#       Targets:
+#         - Arn: !Ref AlertTopic
+#           Id: !GetAtt AlertTopic.TopicName
+#   TopicPolicy:
+#     Type: "AWS::SNS::TopicPolicy"
+#     Properties:
+#       PolicyDocument:
+#         Version: "2012-10-17"
+#         Statement:
+#           - Sid: "AllowCWEToPublishAlertsToSNS"
+#             Effect: "Allow"
+#             Principal:
+#               Service: "events.amazonaws.com"
+#             Action: "sns:Publish"
+#             Resource: !Ref AlertTopic
+#       Topics:
+#         - !Ref AlertTopic
+#
+# Outputs:
+#   AlertTopicArn:
+#     Value: !Ref AlertTopic
+#     Description: "ARN of the topic that receives alerts"
+#     Export:
+#       Name: "root-login-alerts:sns:topic:arn"

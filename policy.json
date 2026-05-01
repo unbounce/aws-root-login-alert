@@ -1,10 +1,15 @@
-{
-  "Statement": [
-    {
-      "Effect": "Deny",
-      "Action": "Update:*",
-      "Principal": "*",
-      "Resource": "*"
-    }
-  ]
-}
+# DEPRECATED — PS-4592
+# CFN stack policy is no longer applied. Service migrated to OpenTofu/Terragrunt.
+# The live stack still carries the deny-all stack policy that was set at
+# create time; this file is preserved as historical record only.
+#
+# {
+#   "Statement": [
+#     {
+#       "Effect": "Deny",
+#       "Action": "Update:*",
+#       "Principal": "*",
+#       "Resource": "*"
+#     }
+#   ]
+# }

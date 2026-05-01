@@ -5,48 +5,33 @@
 ![Category-Security](https://img.shields.io/badge/Category-Security-blue.svg)
 
 Alerts when the AWS root user logs into AWS by sending an email to a
-designated email address.  This infrastructure is intended to be
-long-lived and requires no up-keep.  It should run for free or close
-to free, depending on your account usage.
+designated email address.
 
-## Requirements
+## Status — Migrated to OpenTofu/Terragrunt (PS-4592)
 
-* `make`
-* AWS CLI tool
-* Permission to create AWS resources
+This service was migrated from CloudFormation to OpenTofu/Terragrunt.
+The live CFN stack (`root-login-alerts-production`) is retained with
+`DeletionPolicy: Retain` on all resources and is **not** the source of truth
+for ongoing changes. Do not run `make create-stack` against this template.
 
-## Getting Started
-
-Run `make` to see a list of targets.
-
-## Launching the Stack
-
-The Makefile requires specific input variables to be passed in through
-the command line.  If in doubt, run the Makefile with a specific target
-and it will guide you through which variables are required.
+Active management lives in `ub-tf-infrastructure`:
 
 ```
-make create-stack AWS_PROFILE=example AWS_REGION=us-east-1 RECIPIENT_EMAIL=alerts@example.com
-{
-  "StackId": "..."
-}
+ub-tf-infrastructure/infrastructure/platform-services/unbounce-production/production/us-east-1/aws-root-login-alert/
+  sns/                          (modules/sns)
+  legacy-aws-root-login-alert/  (legacy-modules/legacy-aws-root-login-alert)
 ```
 
-The stack creation will happen asynchronously, but you can check on its
-status with `make status`.  The stack creation will pause while the
-SNS subscription is waiting for manual confirmation.  You will need
-access to the recipient email address you used in the create-stack
-command in order to confirm the SNS topic subscription and allow
-CloudFormation to proceed with the rest of the stack creation.
+The CFN template (`template.cft`), stack policy (`policy.json`), and Makefile
+deploy targets are commented out and preserved for historical reference only.
 
-## Extending This Project
+## Cross-stack export
 
-If you want to extend this project's feature set to something other than
-an email-based alert, there is no need to modify this project's template.
-This is easily done by importing the `AlertTopicArn` into another template
-through `!ImportValue` and attaching a subscription to it.
+The CFN stack still exports `root-login-alerts:sns:topic:arn`. Because the
+stack is retained, the export remains valid for any consumer using
+`!ImportValue`. New consumers should reference the SNS topic ARN through the
+Terragrunt outputs in `ub-tf-infrastructure` rather than the CFN export.
 
 ## License
 
 MIT License.  Please see [LICENSE](LICENSE) for more information.
-
